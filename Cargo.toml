@@ -1,0 +1,11 @@
+[package]
+name = "duck-pond"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cpal = "0.18.2"
+crossterm = "0.29.0"
+num-complex = "0.4.6"
+rand = "0.9"
+rand_distr = "0.5"
