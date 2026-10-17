@@ -1,0 +1,493 @@
+:root {
+  --bg: #121813;
+  --panel: #161d17;
+  --line: #263027;
+  --text: #dfe4dc;
+  --muted: #8d978c;
+  --hen: #f5c84c;
+  --drake: #93d36c;
+  --duckling: #f39a3c;
+  --pea: #b8ef6c;
+  --call: #ee80d2;
+  --accent: #4f8db3;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* --- layout: map on the left, the panel on the right -------------------- */
+
+.app {
+  display: grid;
+  height: 100vh;
+  height: 100dvh;
+  grid-template-columns: minmax(0, 1fr) clamp(320px, 32vw, 440px);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "map title"
+    "map ducks"
+    "map controls";
+}
+
+.title {
+  grid-area: title;
+  padding: 18px 20px 10px;
+  padding-top: max(18px, env(safe-area-inset-top));
+  padding-right: max(20px, env(safe-area-inset-right));
+  background: var(--panel);
+}
+
+.map {
+  grid-area: map;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  padding-left: env(safe-area-inset-left);
+}
+
+.ducks {
+  grid-area: ducks;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: #334034 transparent;
+  scrollbar-width: thin;
+  container-type: inline-size;
+  background: var(--panel);
+  padding: 0 12px;
+  padding-right: max(12px, env(safe-area-inset-right));
+}
+
+.controls {
+  grid-area: controls;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 20px 16px;
+  padding-right: max(20px, env(safe-area-inset-right));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+}
+
+/* --- title and legend ---------------------------------------------------- */
+
+h1 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.dot.hen { background: var(--hen); }
+.dot.drake { background: var(--drake); }
+.dot.duckling { background: var(--duckling); }
+.dot.pea { background: var(--pea); width: 7px; height: 7px; }
+
+#pea-count {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- the map ------------------------------------------------------------- */
+
+#map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: manipulation;
+}
+
+/* --- the duck list ------------------------------------------------------- */
+
+.ducks ol {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 4px 0 12px;
+  list-style: none;
+}
+
+.duck {
+  display: grid;
+  grid-template-columns: 14px 4.7em 4.3em 4.4em minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 34px;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.duck:hover {
+  background: #1e271f;
+}
+
+.duck[aria-pressed="true"] {
+  background: #253226;
+  box-shadow: inset 0 0 0 1px #3d4f3e;
+}
+
+.duck .name {
+  font-weight: 600;
+}
+
+.duck .dist,
+.duck .bearing {
+  color: var(--muted);
+  text-align: right;
+}
+
+.duck .doing {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, max-content);
+  justify-content: start;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* when space is short, what they are doing gives way to what they are saying */
+.duck .activity {
+  overflow: hidden;
+  color: var(--muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.duck .call {
+  justify-self: start;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgb(238 128 210 / 0.16);
+  color: var(--call);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.duck .call:empty {
+  display: none;
+}
+
+/* in a narrow list, a calling duck shows just its call, which matters more
+   than what it is up to */
+@container (max-width: 420px) {
+  .duck.calling .activity {
+    display: none;
+  }
+}
+
+/* --- controls ------------------------------------------------------------ */
+
+.controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid #334034;
+  border-radius: 10px;
+  background: #1d251e;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  transition: background 0.15s, transform 0.08s;
+}
+
+.controls button:hover:not(:disabled) {
+  background: #253026;
+}
+
+.controls button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.controls button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.controls svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+button.primary {
+  border-color: transparent;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.controls button.primary:hover:not(:disabled) {
+  background: #5d9cc2;
+}
+
+.controls #peas {
+  flex: 1;
+}
+
+.controls #peas svg {
+  fill: var(--pea);
+}
+
+#headphones[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: rgb(79 141 179 / 0.22);
+  color: #cfe6f5;
+}
+
+#pause .when-paused,
+#pause.paused .when-playing {
+  display: none;
+}
+
+#pause.paused .when-paused {
+  display: block;
+}
+
+.hint {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+kbd {
+  padding: 0 5px;
+  border: 1px solid #3a463b;
+  border-radius: 4px;
+  font: 0.75rem ui-monospace, monospace;
+}
+
+/* --- the intro ----------------------------------------------------------- */
+
+.intro {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(10 14 11 / 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.intro[hidden] {
+  display: none;
+}
+
+.card {
+  width: min(440px, 100%);
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--panel);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.5);
+}
+
+.card h2 {
+  margin: 0 0 10px;
+  font-size: 1.5rem;
+}
+
+.card p {
+  margin: 0 0 18px;
+  color: #b9c2b7;
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.switch input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+}
+
+button.big {
+  width: 100%;
+  min-height: 50px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+button.big:disabled {
+  opacity: 0.6;
+}
+
+.error {
+  margin: 14px 0 0 !important;
+  color: #f19a8c !important;
+}
+
+/* keyboard hints only where there is a keyboard */
+@media (hover: none), (pointer: coarse) {
+  .hint {
+    display: none;
+  }
+}
+
+/* --- phones and other tall screens: everything stacked ------------------- */
+
+@media (orientation: portrait) {
+  html,
+  body {
+    font-size: 14px;
+  }
+
+  .app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "title"
+      "map"
+      "ducks"
+      "controls";
+  }
+
+  .title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 12px;
+    padding: 10px 14px 8px;
+    padding-top: max(10px, env(safe-area-inset-top));
+    background: var(--bg);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .legend {
+    gap: 4px 10px;
+    font-size: 0.8rem;
+  }
+
+  .map {
+    aspect-ratio: 76 / 53;
+    max-height: 56dvh;
+    padding: 0;
+  }
+
+  .ducks {
+    padding: 0 6px;
+    border-top: 1px solid var(--line);
+  }
+
+  .duck {
+    grid-template-columns: 12px 4.6em 4.1em 4.1em minmax(0, 1fr);
+    gap: 6px;
+    min-height: 36px;
+  }
+
+  .controls {
+    padding: 10px 12px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+}
+
+/* very narrow phones: just the icon for headphones */
+@media (max-width: 380px) {
+  #headphones span {
+    display: none;
+  }
+}
+
+/* phones held sideways: a slimmer panel */
+@media (orientation: landscape) and (max-height: 500px) {
+  html,
+  body {
+    font-size: 13px;
+  }
+
+  .app {
+    grid-template-columns: minmax(0, 1fr) clamp(260px, 38vw, 360px);
+  }
+
+  .title {
+    padding: 10px 12px 6px;
+    padding-top: max(10px, env(safe-area-inset-top));
+  }
+
+  .duck {
+    grid-template-columns: 10px 4.4em 3.9em 3.9em minmax(0, 1fr);
+    gap: 6px;
+    min-height: 28px;
+    padding: 2px 6px;
+  }
+
+  .controls {
+    padding: 8px 12px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  .controls button {
+    min-height: 40px;
+  }
+
+  #headphones span {
+    display: none;
+  }
+}

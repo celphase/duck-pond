@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#121813">
+  <meta name="description" content="A live duck pond: a small flock of mallards, every call synthesized as it happens and heard from where you stand on the bank.">
+  <title>The Duck Pond</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%234f8db3'/%3E%3Cellipse cx='14' cy='19' rx='9' ry='5.5' fill='%23f5c84c'/%3E%3Ccircle cx='21' cy='12' r='4.5' fill='%23f5c84c'/%3E%3Cellipse cx='26' cy='12.5' rx='3' ry='1.6' fill='%23e8893a'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <main class="app">
+    <header class="title">
+      <h1>The Duck Pond</h1>
+      <p class="legend" aria-label="Legend">
+        <span><i class="dot hen"></i>hen</span>
+        <span><i class="dot drake"></i>drake</span>
+        <span><i class="dot duckling"></i>duckling</span>
+        <span><i class="dot pea"></i><span id="pea-count">0</span>&nbsp;peas</span>
+      </p>
+    </header>
+
+    <section class="map" aria-label="Map of the pond seen from above, with you on the bank at the bottom">
+      <canvas id="map"></canvas>
+    </section>
+
+    <section class="ducks" aria-label="Ducks, nearest first">
+      <ol id="ducks"></ol>
+    </section>
+
+    <footer class="controls">
+      <button id="peas" class="primary" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="14" r="2.6"/><circle cx="13" cy="9" r="2.6"/><circle cx="17" cy="16" r="2.6"/></svg>
+        Throw peas
+      </button>
+      <button id="headphones" aria-pressed="false" title="Render for headphones (h)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15v-3a8 8 0 0 1 16 0v3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="5" height="7" rx="1.5"/><rect x="16" y="14" width="5" height="7" rx="1.5"/></svg>
+        <span>Headphones</span>
+      </button>
+      <button id="pause" aria-label="Pause" title="Pause (space)" disabled>
+        <svg class="when-playing" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+        <svg class="when-paused" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5l12 7-12 7z"/></svg>
+      </button>
+      <p class="hint">
+        <kbd>p</kbd> peas · <kbd>h</kbd> headphones · <kbd>space</kbd> pause ·
+        rings at 5, 10, 20 and 40 m
+      </p>
+    </footer>
+  </main>
+
+  <div id="intro" class="intro">
+    <div class="card">
+      <h2>The Duck Pond</h2>
+      <p>
+        A small flock of mallards going about their day: three hens, two
+        drakes and two broods of ducklings. No recordings. Every quack is
+        synthesized as it happens and heard from where you stand on the bank.
+      </p>
+      <label class="switch">
+        <input type="checkbox" id="intro-headphones">
+        <span>I'm wearing headphones</span>
+      </label>
+      <button id="listen" class="primary big">Listen</button>
+      <p id="intro-error" class="error" hidden></p>
+    </div>
+  </div>
+</body>
+</html>

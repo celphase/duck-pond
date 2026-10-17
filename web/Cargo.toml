@@ -1,0 +1,13 @@
+[package]
+name = "duck-pond-web"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+duck-pond = { path = ".." }
+rand = { version = "0.9", default-features = false, features = ["std", "std_rng"] }

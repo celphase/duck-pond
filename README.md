@@ -24,7 +24,7 @@ about 40 % feeding, 30 % resting, 15 % preening and the rest getting about.
 | Following | Ducklings swim in a line behind their mother and gather round her when she stops. A drake keeps a little behind his mate. Followers usually copy their leader, but not always: ducklings may feed while their mother rests, and a drake may keep watch while his mate feeds. |
 | Straying | Now and then a feeding duckling wanders off after insects. Once it is more than 4 m from its mother, it stops and peeps until she calls it back. |
 | Answering | A hen's quack series can set off nearby ducks, and her mate is the most likely to answer. Quiet and busy spells spread from duck to duck, so the pond goes through lively and drowsy stretches. |
-| Feeding on peas | Press `p` in `--visualize` mode to throw a handful of peas. The nearest ducks notice them first, call, and race from pea to pea. Once the peas are gone, they go back to what they were doing. |
+| Feeding on peas | Press `p` in `--visualize` mode (or **Throw peas** on the web) to throw a handful of peas. The nearest ducks notice them first, call, and race from pea to pea. Once the peas are gone, they go back to what they were doing. |
 
 ### Sounds
 
@@ -151,6 +151,37 @@ which must be at least 16 kHz. With `--visualize`, the scene thread also
 records a snapshot per block, tagged with its output frame. The terminal map
 (`visual.rs`) shows each snapshot when that frame is actually played, so what
 you see stays in step with what you hear.
+
+## On the web
+
+`web/` runs the same pond in the browser, with a map of the pond and a list
+of the ducks. On a phone the map sits above the list, with big buttons at the
+bottom; on a desktop or a phone held sideways, the list is beside the map.
+
+```sh
+rustup target add wasm32-unknown-unknown   # once
+web/build.sh                               # builds web/www/duck_pond.wasm
+python3 -m http.server -d web/www          # or any static file server
+```
+
+Then open <http://localhost:8000>. Audio worklets only run on secure pages,
+so to try it from a phone, serve `web/www` over HTTPS (any static host will
+do); a plain `http://` LAN address won't play. Add `?seed=N` to the URL for a
+repeatable pond. Keys: `p` throws peas, `h` switches headphone rendering on
+and off, and space pauses.
+
+The browser version mirrors the native player's threads:
+
+- `web/src/lib.rs` compiles `scene.rs` and `synth.rs` to a bare WebAssembly
+  module with a few C-style exports and no JS glue.
+- `pond-worker.js` runs it in a Web Worker, keeping 16 blocks (about 170 ms)
+  rendered ahead, so a long call synthesized on a slow phone doesn't cause a
+  dropout. With each block, it sends a snapshot of the scene to the page.
+- `pond-worklet.js`, an `AudioWorkletProcessor`, plays the blocks and tells
+  the page the context time at which each one starts.
+- `app.js` shows each snapshot once `AudioContext.getOutputTimestamp()` says
+  its block is coming out of the speakers, so what you see matches what you
+  hear.
 
 ## License
 

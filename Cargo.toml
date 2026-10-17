@@ -4,9 +4,17 @@ version = "0.1.0"
 edition = "2024"
 license = "MIT"
 
+[workspace]
+members = ["web"]
+
 [dependencies]
+num-complex = "0.4.6"
+rand = { version = "0.9", default-features = false, features = ["std", "std_rng"] }
+rand_distr = "0.5"
+
+# the pond itself also builds for the browser (see web/); playing it in a
+# terminal needs an audio device, a terminal and the OS's randomness
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 cpal = "0.18.2"
 crossterm = "0.29.0"
-num-complex = "0.4.6"
-rand = "0.9"
-rand_distr = "0.5"
+rand = { version = "0.9", features = ["os_rng"] }

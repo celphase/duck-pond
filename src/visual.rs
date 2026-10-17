@@ -12,7 +12,7 @@ use crossterm::event::{self, Event, KeyCode, KeyEventKind, KeyModifiers};
 use crossterm::style::{Attribute, Color, Print, SetAttribute, SetBackgroundColor, SetForegroundColor};
 use crossterm::{cursor, execute, queue, terminal};
 
-use crate::scene::{Command, Kind, Snapshot, Vec2, in_pond, on_bank};
+use duck_pond::scene::{Command, Kind, Snapshot, Vec2, in_pond, on_bank};
 
 /// Scene states waiting to be shown once their audio is heard.
 pub type Timeline = Arc<Mutex<VecDeque<Snapshot>>>;

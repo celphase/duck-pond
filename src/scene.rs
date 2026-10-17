@@ -655,6 +655,12 @@ impl Scene {
         }
     }
 
+    /// Switch between rendering for headphones and for speakers. Sounds
+    /// already on their way glide over to the new placement.
+    pub fn set_headphones(&mut self, headphones: bool) {
+        self.headphones = headphones;
+    }
+
     /// Throw a handful of peas into the arc in front of the listener. Every
     /// duck notices, the nearest first, and comes over to eat.
     fn scatter_peas(&mut self) {

@@ -7,8 +7,6 @@
 //! `--headphones`, each ear hears the ducks as it would on the bank, a little
 //! sooner or later and brighter or duller than the other.
 
-mod scene;
-mod synth;
 mod visual;
 
 use std::collections::VecDeque;
@@ -23,7 +21,7 @@ use cpal::{FromSample, SampleFormat, SizedSample, StreamConfig};
 use rand::SeedableRng;
 use rand::rngs::StdRng;
 
-use scene::{Command, Scene};
+use duck_pond::scene::{Command, Scene};
 use visual::Timeline;
 
 /// Frames per simulation step and per chunk sent to the audio thread.
