@@ -2,6 +2,7 @@
 name = "duck-pond"
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
 
 [dependencies]
 cpal = "0.18.2"

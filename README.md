@@ -151,3 +151,7 @@ which must be at least 16 kHz. With `--visualize`, the scene thread also
 records a snapshot per block, tagged with its output frame. The terminal map
 (`visual.rs`) shows each snapshot when that frame is actually played, so what
 you see stays in step with what you hear.
+
+## License
+
+Licensed under the [MIT License](LICENSE).
