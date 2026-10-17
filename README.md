@@ -2,6 +2,8 @@
 
 High-quality duck audio synthesizer.
 
+Available in web format too: https://celphase.github.io/duck-pond/
+
 ![a screenshot of duck-pond](screenshot.png)
 
 ## Ducks and their sounds
