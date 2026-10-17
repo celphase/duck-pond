@@ -12,12 +12,12 @@ The pond holds a small flock of mallards: three hens (Mabel, Clover and
 Hazel), a drake escorting his mate (Rufus, with Clover), a lone drake
 (Bramble), and two broods of ducklings following Mabel and Hazel.
 
-### Behaviours
+### Behaviors
 
 Ducks spend their time much as real mallards do, in bouts lasting minutes:
 about 40 % feeding, 30 % resting, 15 % preening and the rest getting about.
 
-| Behaviour | What happens |
+| Behavior | What happens |
 | --- | --- |
 | Swimming / waddling | Heading to a new spot on the pond or the bank, below hull speed. Hens with young call them together first, then go at a pace the ducklings can keep up with. |
 | Dabbling / grazing | Feeding in place: pottering about one spot and sieving the surface in spells. |
@@ -67,7 +67,7 @@ in space according to where its duck is at that moment.
 
 A background thread advances the pond in 512-frame blocks. In each block,
 every duck *thinks* (chooses an activity and a target), *steers* (paddles
-towards the target, slides along the shore and keeps clear of other adults),
+toward the target, slides along the shore and keeps clear of other adults),
 and *calls* when its call timer runs out. Each call is rendered in full by the
 synthesizer and becomes a **voice**: a buffer of samples linked to its duck,
 so the sound follows the duck as it moves.
@@ -142,7 +142,7 @@ voice is placed according to its duck's current position:
 - **Water bed:** noise bandpassed to 90–700 Hz with a slow random swell,
   decorrelated between the two channels.
 - **Output stage:** a master gain, a half-second fade-in at startup, and a
-  soft limiter (transparent below 0.7, then `tanh` towards 1).
+  soft limiter (transparent below 0.7, then `tanh` toward 1).
 
 ### 5. Playback (`main.rs`)
 
@@ -184,6 +184,11 @@ The browser version mirrors the native player's threads:
 - `app.js` shows each snapshot once `AudioContext.getOutputTimestamp()` says
   its block is coming out of the speakers, so what you see matches what you
   hear.
+
+## Attribution
+
+This work builds on research on ducks, duck behavior, duck sounds, and audio and signal processing
+in general. See [ATTRIBUTION.md](ATTRIBUTION.md).
 
 ## License
 
